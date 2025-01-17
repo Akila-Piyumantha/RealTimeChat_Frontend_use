@@ -116,18 +116,6 @@ const outfitFont = localFont({
     variable: "--font-outfit",
   
 });
-  
-const marckScriptFont = localFont({
-    src: [
-      {
-        path: "./fonts/MarckScript-Regular.ttf",
-        weight: "400",
-        style: "normal",
-      },
-    ],
-      variable: "--font-marck-script",
-    display: "swap",
-});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -152,7 +140,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${montserratFont.variable} ${merriweatherFont.variable} ${montezFont.variable} ${outfitFont.variable} ${marckScriptFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${montserratFont.variable} ${merriweatherFont.variable} ${montezFont.variable} ${outfitFont.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
       </body>

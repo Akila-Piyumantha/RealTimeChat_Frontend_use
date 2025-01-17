@@ -9,8 +9,7 @@ const ChatWindow: React.FC = () => {
   >([
     { id: 1, text: "Hello", sender: "user", timestamp: "9:30 AM" },
     { id: 2, text: "How are you?", sender: "user", timestamp: "9:31 AM" },
-    { id: 3, text: "Same for this side.", sender: "me", timestamp: "9:32 AM" },
-    { id: 4, text: "Good to hear!", sender: "user", timestamp: "9:33 AM" },
+
   ]);
 
   const sendMessage = (e: React.KeyboardEvent<HTMLInputElement>) => {
