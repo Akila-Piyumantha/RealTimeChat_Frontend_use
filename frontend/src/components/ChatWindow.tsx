@@ -27,7 +27,7 @@ const ChatWindow: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-100">
+    <div className="flex flex-col h-full bg-primary">
       {/* Chat Area */}
       <div className="flex-grow p-4 overflow-y-auto">
         {messages.map((msg) => (

@@ -11,7 +11,7 @@ const Sidebar: React.FC = () => {
   const dp = ["dp.jpg", "dp.jpg", "dp.jpg"];
 
   return (
-    <div className="w-1/4 font-sans bg-gray-900 text-white p-4 flex flex-col h-full">
+    <div className="w-1/4 font-sans bg-secondary text-white p-4 flex flex-col h-full">
     <h3 className="text-xl font-semibold mb-4">Chats</h3>
     <Input
       type="text"

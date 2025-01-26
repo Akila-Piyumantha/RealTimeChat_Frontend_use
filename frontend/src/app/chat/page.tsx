@@ -11,7 +11,7 @@ const ChatPage: React.FC = () => {
 
       {/* Chat Section */}
       <div className="flex flex-col flex-grow">
-        <header className="bg-gray-800 text-white py-4 px-6 text-center">
+        <header className="bg-secondary text-white py-4 px-6 text-center">
           Chat with Test
         </header>
         <ChatWindow />
