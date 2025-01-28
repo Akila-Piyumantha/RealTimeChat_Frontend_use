@@ -33,7 +33,7 @@ const Sidebar: React.FC = () => {
     </ul>
   
     {/* Bottom User Info */}
-    <div className="bg-black text-white flex items-center p-3 mt-auto">
+    <div className="bg-background text-white flex items-center p-3 mt-auto">
       <Avatar className="mr-3">
         <AvatarImage src="dp.jpg" />
       </Avatar>
