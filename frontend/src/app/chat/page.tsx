@@ -10,8 +10,8 @@ const ChatPage: React.FC = () => {
       <Sidebar />
 
       {/* Chat Section */}
-      <div className="flex flex-col flex-grow">
-        <header className="bg-gray-800 text-white py-4 px-6 text-center">
+      <div className="flex flex-col flex-grow font-title">
+        <header className="bg-secondary text-white py-4 px-6 text-xl text-center">
           Chat with Test
         </header>
         <ChatWindow />
