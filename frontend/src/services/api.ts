@@ -63,6 +63,11 @@ export const userService = {
     return response.data;
   },
 
+  searchUsers: async (query: string) => {
+    const response = await api.get(`/users/search/${query}`);
+    return response.data;
+  },
+
   updateProfile: async (userData: any) => {
     const response = await api.put("/users/profile", userData);
     if (response.data.user) {

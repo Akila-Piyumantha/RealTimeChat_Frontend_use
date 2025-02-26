@@ -29,6 +29,9 @@ const ChatWindow: React.FC = () => {
   useEffect(() => {
     socketRef.current = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:5000");
 
+    // Notify server that user is online
+    socketRef.current.emit("userOnline", currentUser?.id);
+
     socketRef.current.on("receiveMessage", (message: Message) => {
       if (
         (message.sender === currentUser?.id && message.receiver === contactId) ||
@@ -74,10 +77,7 @@ const ChatWindow: React.FC = () => {
   const sendMessage = async () => {
     if (!inputMessage.trim() || !contactId || !currentUser) return;
 
-    const timestamp = new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const timestamp = new Date().toISOString();
 
     const newMessage = {
       id: Date.now().toString(),
@@ -92,7 +92,11 @@ const ChatWindow: React.FC = () => {
       setMessages((prev) => [...prev, newMessage]);
       setInputMessage("");
 
-      await chatService.sendMessage(newMessage);
+      await chatService.sendMessage({
+        sender: currentUser.id,
+        receiver: contactId,
+        text: inputMessage
+      });
 
       socketRef.current.emit("sendMessage", newMessage);
     } catch (error) {
@@ -110,6 +114,14 @@ const ChatWindow: React.FC = () => {
   const formatMessageDate = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleDateString();
+  };
+
+  const formatMessageTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const groupedMessages = messages.reduce((groups: Record<string, Message[]>, message) => {
@@ -146,13 +158,13 @@ const ChatWindow: React.FC = () => {
                 <div
                   key={msg.id}
                   className={`p-3 my-2 rounded-lg max-w-xs ${msg.sender === currentUser?.id
-                      ? "bg-accent text-white self-end ml-auto"
-                      : "bg-background text-white self-start"
+                    ? "bg-accent text-white self-end ml-auto"
+                    : "bg-background text-white self-start"
                     }`}
                 >
                   <div className="text-sm">{msg.text}</div>
                   <div className="flex justify-end items-center gap-1 text-xs text-gray-300 mt-1">
-                    <span>{msg.timestamp}</span>
+                    <span>{formatMessageTime(msg.timestamp)}</span>
                     {msg.sender === currentUser?.id && (
                       <span>
                         {msg.seen ? (
@@ -184,26 +196,6 @@ const ChatWindow: React.FC = () => {
             </div>
           ))
         )}
-        <div ref={endOfMessagesRef} />
-      </div>
-
-      {/* Input Area */}
-      <div className="flex items-center border-t border-accent bg-background p-3">
-        <input
-          type="text"
-          className="flex-1 p-3 bg-transparent text-white focus:outline-none rounded-md"
-          placeholder="Type a message..."
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-        />
-        <Button
-          className="ml-2 p-3 bg-accent text-white rounded-full hover:bg-opacity-80 transition"
-          onClick={sendMessage}
-          disabled={!inputMessage.trim()}
-        >
-          <IoMdSend size={20} />
-        </Button>
       </div>
     </div>
   );

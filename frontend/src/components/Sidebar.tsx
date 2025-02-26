@@ -7,9 +7,10 @@ import { IoIosSettings } from "react-icons/io";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { CiLock } from "react-icons/ci";
 import { IoSearchOutline } from "react-icons/io5";
+import { FaUserPlus } from "react-icons/fa";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { authService, userService } from "@/services/api";
 
 interface Contact {
@@ -27,6 +28,7 @@ const Sidebar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
+  const router = useRouter();
   const currentUser = authService.getCurrentUser();
 
   useEffect(() => {
@@ -64,7 +66,15 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className="w-1/4 font-title bg-secondary text-white p-4 flex flex-col h-full">
-      <h3 className="text-xl font-title font-semibold mb-4">Chats</h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-xl font-title font-semibold">Chats</h3>
+        <Button
+          onClick={() => router.push('/find-users')}
+          className="bg-accent text-white rounded-full p-2 h-9 w-9 flex items-center justify-center hover:bg-opacity-80"
+        >
+          <FaUserPlus size={15} />
+        </Button>
+      </div>
 
       {/* Search Box */}
       <div className="relative mb-4">
@@ -88,6 +98,16 @@ const Sidebar: React.FC = () => {
       ) : filteredContacts.length === 0 ? (
         <div className="text-center py-8 text-gray-400">
           {searchTerm ? "No contacts found" : "No contacts yet"}
+          {!searchTerm && (
+            <div className="mt-2">
+              <Button
+                onClick={() => router.push('/find-users')}
+                className="bg-accent text-white px-4 py-2 rounded-md hover:bg-opacity-80"
+              >
+                Find Users
+              </Button>
+            </div>
+          )}
         </div>
       ) : (
         <ul className="overflow-y-auto flex-grow">
