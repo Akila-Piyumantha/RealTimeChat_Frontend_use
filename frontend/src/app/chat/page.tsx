@@ -1,125 +1,87 @@
-// app/chat/page.tsx
-'use client';
+"use client";
 
-import ProtectedRoute from '@/components/ProtectedRoute';
-import { useAuth } from '@/context/AuthContext';
-import { Button } from '@/components/ui/button';
-import { useState, useEffect, useRef } from 'react';
-import { Socket, io } from 'socket.io-client';
-import { Input } from '@/components/ui/input';
-import { Send, LogOut } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import Sidebar from "@/components/Sidebar";
+import ChatWindow from "@/components/ChatWindow";
+import { useParams, useRouter } from "next/navigation";
+import { authService, userService } from "@/services/api";
+import LoadingScreen from "@/components/LoadingScreen";
 
-interface Message {
-  id: string;
-  text: string;
-  sender: string;
-  timestamp: Date;
-}
-
-export default function ChatPage() {
-  const { user, logout } = useAuth();
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [newMessage, setNewMessage] = useState('');
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+const ChatPage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
+  const [contactName, setContactName] = useState<string>("");
+  const { contactId } = useParams();
+  const router = useRouter();
 
   useEffect(() => {
-    const socketInstance = io(process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000');
-    setSocket(socketInstance);
+    // Check authentication
+    const checkAuth = async () => {
+      setLoading(true);
 
-    socketInstance.on('receiveMessage', (message: Message) => {
-      setMessages(prev => [...prev, message]);
-    });
+      if (!authService.isAuthenticated()) {
+        router.push("/sign-in");
+        return;
+      }
 
-    return () => {
-      socketInstance.disconnect();
+      // If on the chat page with no specific contact, redirect to first contact
+      if (!contactId) {
+        try {
+          const contacts = await userService.getContacts();
+          if (contacts && contacts.length > 0) {
+            router.push(`/chat/${contacts[0].id}`);
+          }
+        } catch (error) {
+          console.error("Failed to fetch contacts:", error);
+        }
+      }
+
+      setLoading(false);
     };
-  }, []);
 
+    checkAuth();
+  }, [router]);
+
+  // Fetch contact name when contactId changes
   useEffect(() => {
-    // Scroll to bottom when messages change
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const handleSendMessage = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newMessage.trim() || !socket || !user) return;
-
-    const messageData: Message = {
-      id: Date.now().toString(),
-      text: newMessage,
-      sender: user._id,
-      timestamp: new Date(),
+    const fetchContactName = async () => {
+      if (contactId) {
+        try {
+          const user = await userService.getUserProfile(contactId as string);
+          setContactName(user.name);
+        } catch (error) {
+          console.error("Failed to fetch contact details:", error);
+        }
+      }
     };
 
-    socket.emit('sendMessage', messageData);
-    setNewMessage('');
-  };
+    fetchContactName();
+  }, [contactId]);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <ProtectedRoute>
-      <div className="flex flex-col h-screen bg-background">
-        {/* Header */}
-        <header className="bg-secondary p-4 border-b border-primary flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">Real-time Chat</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-white/70">Hello, {user?.name}</span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={logout}
-              className="border-primary text-white hover:bg-primary/20"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </header>
+    <div className="flex h-screen bg-primary">
+      {/* Sidebar */}
+      <Sidebar />
 
-        {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.sender === user?._id ? 'justify-end' : 'justify-start'
-                }`}
-            >
-              <div
-                className={`max-w-xs sm:max-w-md md:max-w-lg p-3 rounded-lg ${message.sender === user?._id
-                    ? 'bg-accent text-white rounded-br-none'
-                    : 'bg-secondary text-white rounded-bl-none'
-                  }`}
-              >
-                <p>{message.text}</p>
-                <p className="text-xs opacity-70 mt-1">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </p>
-              </div>
-            </div>
-          ))}
-          <div ref={messagesEndRef} />
+      {/* Chat Section */}
+      {contactId ? (
+        <div className="flex flex-col flex-grow font-title">
+          <header className="bg-secondary text-white py-3 px-6 flex items-center">
+            <div className="font-medium text-lg">{contactName || "Chat"}</div>
+          </header>
+          <ChatWindow />
         </div>
-
-        {/* Message Input */}
-        <form
-          onSubmit={handleSendMessage}
-          className="p-4 border-t border-primary bg-secondary"
-        >
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              className="flex-1 bg-background border-primary focus:border-accent"
-            />
-            <Button type="submit" className="bg-accent hover:bg-accent/90">
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
-        </form>
-      </div>
-    </ProtectedRoute>
+      ) : (
+        <div className="flex flex-col flex-grow font-title justify-center items-center bg-primary text-white">
+          <div className="text-2xl mb-4">Welcome to Your Chat App</div>
+          <p className="text-gray-400">Select a contact to start chatting</p>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default ChatPage;
