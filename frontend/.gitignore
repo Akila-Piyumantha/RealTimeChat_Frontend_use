@@ -1,0 +1,15 @@
+node_modules
+package.json
+akila-realkey.pem
+.terraform/  
+*.tfstate  
+*.tfstate.*  
+.terraform.lock.hcl  
+
+# Ignore any local environment variable files  
+*.tfvars  
+*.tfvars.json  
+
+# Ignore IDE/editor specific files  
+*.swp  
+*.swo  
