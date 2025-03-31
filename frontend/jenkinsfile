@@ -4,7 +4,7 @@ pipeline {
     environment {  
         VITE_API_BASE_URL = 'http://localhost:5001/api'  // Corrected syntax (added `=` and quotes)  
         VITE_BASE_URL = 'http://localhost:5001'            // Corrected syntax (added `=` and quotes)  
-        IMAGE_NAME = 'akilapiumantha/realTimeChat'         // Corrected syntax (removed space before the `=`)  
+        IMAGE_NAME = 'akilapiumantha/realTimeChat'         // Corrected syntax (removed space before the `=`)  45555
     }  
 
     stages {  
