@@ -1,11 +1,10 @@
-pipeline {//8
+pipeline {
     agent any
 
     environment {
-        MONGO_URI = credentials('MONGO_URI')  // Jenkins Credentials
-        JWT_SECRET = credentials('JWT_SECRET')
-        PORT = '5000'
-        IMAGE_NAME = 'akilapiumantha/realapi' // Docker Hub Image Name
+        VITE_API_BASE_URL=http://localhost:5001/api
+        VITE_BASE_URL=http://localhost:5001
+        IMAGE_NAME = 'akilapiumantha/realTimeChat'
     }
 //stage 1
     stages {
@@ -18,8 +17,8 @@ pipeline {//8
         stage('Install Dependencies') {
             steps {
                 sh 'npm install'
-            }//h
-        }
+            }
+        }//j
 
         stage('Build Docker Image') {
             steps {
@@ -52,3 +51,4 @@ pipeline {//8
         }
     }
 }
+
