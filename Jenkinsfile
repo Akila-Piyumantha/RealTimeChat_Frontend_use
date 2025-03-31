@@ -24,14 +24,6 @@ pipeline {
             }
         }
 
-        stage('Build Frontend') {
-            steps {
-                dir('frontend') {
-                    sh 'VITE_API_BASE_URL="http://54.221.83.205:5000/api" VITE_BASE_URL="http://54.221.83.205:5000" npx vite build'
-                }
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 dir('frontend') {
