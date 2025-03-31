@@ -4,7 +4,7 @@ pipeline {
     environment {
         VITE_API_BASE_URL = 'http://54.221.83.205:5000/api'
         VITE_BASE_URL = 'http://54.221.83.205:5000'
-        IMAGE_NAME = 'akilapiumantha/realTimeChat'
+        IMAGE_NAME = 'akilapiumantha/realtimechat'
         CONTAINER_PORT = '5173'
         HOST_PORT = '5174'
     }
