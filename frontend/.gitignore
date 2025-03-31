@@ -1,4 +1,4 @@
-node_modules
+
 akila-realkey.pem
 .terraform/  
 *.tfstate  
