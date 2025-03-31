@@ -7,14 +7,20 @@ WORKDIR /app
 # Copy package.json and package-lock.json first for efficient caching
 COPY package*.json ./
 
-# Install only production dependencies
-RUN npm install --production
+# Install dependencies (including devDependencies for the build process)
+RUN npm install
 
 # Copy the entire project files
 COPY . .
 
+# Ensure vite is available in PATH
+ENV PATH="/app/node_modules/.bin:$PATH"
+
 # Build the React app
 RUN npm run build
+
+# Remove devDependencies to keep the final image light
+RUN npm prune --production
 
 # Install serve globally to serve the static files
 RUN npm install -g serve
