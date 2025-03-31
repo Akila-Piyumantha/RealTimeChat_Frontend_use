@@ -9,4 +9,4 @@
       shell: docker stop realtimechat || true && docker rm realtimechat || true
 
     - name: Run new container
-      shell: docker run -d -p 5001:5001 --name realtimechat akilapiumantha/realtimechat
+      shell: docker run -d -p 5173:5173 --name realtimechat akilapiumantha/realtimechat
