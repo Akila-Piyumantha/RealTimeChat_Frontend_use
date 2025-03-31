@@ -1,26 +1,25 @@
-# Use the official Node.js image as the base
-FROM node:20-alpine
+# Use the official Node.js image as the builder
+FROM node:20-alpine AS builder
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json first for efficient caching
+# Copy package.json and install dependencies
 COPY package*.json ./
+RUN npm install --frozen-lockfile
 
-# Install dependencies
-RUN npm install
-
-# Copy the entire project files
+# Copy the entire project and build
 COPY . .
-
-# Build the React app
 RUN npm run build
 
-# Install serve globally to serve the static files
-RUN npm install -g serve
+# Use a lightweight Nginx image for serving static files
+FROM nginx:alpine
 
-# Expose the correct port for production (5174)
+# Copy built files from the builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# Expose the correct port for production
 EXPOSE 5174
 
-# Start the server to serve the built frontend
-CMD ["serve", "-s", "dist", "-l", "5174"]
+# Start the Nginx server
+CMD ["nginx", "-g", "daemon off;"]
