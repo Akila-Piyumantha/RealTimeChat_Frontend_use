@@ -7,3 +7,4 @@ yarn-error.log
 .vscode
 .DS_Store
 *.md
+dist  # If you generate dist folder locally, you should ignore this as well.
