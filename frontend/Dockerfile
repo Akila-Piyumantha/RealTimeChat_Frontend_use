@@ -1,32 +1,26 @@
-# Use an official Node.js image for building the React app
-FROM node:20-alpine AS builder
+# Use the official Node.js image as the base
+FROM node:20-alpine
 
-# Set the working directory
+# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json for dependency installation
+# Copy package.json and package-lock.json first for efficient caching
 COPY package*.json ./
 
-# Install dependencies, including devDependencies required for build
+# Install dependencies
 RUN npm install
 
 # Copy the entire project files
 COPY . .
 
-# Ensure Vite is accessible
-ENV PATH="/app/node_modules/.bin:$PATH"
-
 # Build the React app
 RUN npm run build
 
-# Use a lightweight Nginx image for serving the static files
-FROM nginx:alpine AS runner
+# Install serve globally to serve the static files
+RUN npm install -g serve
 
-# Copy the built files from the builder stage
-COPY --from=builder /app/dist /usr/share/nginx/html
-
-# Expose port 5174
+# Expose the correct port for production (5174)
 EXPOSE 5174
 
-# Start Nginx server
-CMD ["nginx", "-g", "daemon off;"]
+# Start the server to serve the built frontend
+CMD ["serve", "-s", "dist", "-l", "5174"]
