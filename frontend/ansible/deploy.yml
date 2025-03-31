@@ -1,0 +1,12 @@
+- name: Deploy Docker Container
+  hosts: ec2
+  become: yes
+  tasks:
+    - name: Pull latest Docker image
+      shell: docker pull akilapiumantha/realtimechat:latest
+
+    - name: Stop existing container
+      shell: docker stop realtimechat || true && docker rm realtimechat || true
+
+    - name: Run new container
+      shell: docker run -d -p 5001:5001 --name realtimechat akilapiumantha/realtimechat
