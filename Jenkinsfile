@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        VITE_API_BASE_URL = 'http://54.221.83.205:5000/api'
-        VITE_BASE_URL = 'http://54.221.83.205:5000'
+        VITE_API_BASE_URL = 'http://34.229.134.187:5000/api'
+        VITE_BASE_URL = 'http://34.229.134.187:5000'
         IMAGE_NAME = 'akilapiumantha/realtimechat'
         CONTAINER_PORT = '5173'
         HOST_PORT = '5174'
